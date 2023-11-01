@@ -1,36 +1,40 @@
 class Solution {
 public:
-    void dfs(int row, int col, vector<vector<int>>& ans, vector<vector<int>>& image, int newcolor, int ini) {
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
         int n = image.size();
         int m = image[0].size();
-        
-        if (row < 0 || row >= n || col < 0 || col >= m) {
-            return;
+        int iniColor = image[sr][sc];
+
+        if (iniColor == newColor) {
+            return image;  // No need to perform flood fill if the colors are already the same.
         }
 
-        if (image[row][col] == ini && ans[row][col] != newcolor) {
-            ans[row][col] = newcolor;
-            
-           
-            int delrow[] = {-1, 0, 1, 0};
-            int delcol[] = {0, 1, 0, -1};
-            
-            for (int i = 0; i < 4; i++) {
-                int nrow = row + delrow[i];
-                int ncol = col + delcol[i];
-                dfs(nrow, ncol, ans, image, newcolor, ini);
+        vector<vector<int>> ans = image;
+        stack<pair<int, int>> stk;
+        stk.push({sr, sc});
+
+        while (!stk.empty()) {
+            int row = stk.top().first;
+            int col = stk.top().second;
+            stk.pop();
+
+            if (ans[row][col] == iniColor) {
+                ans[row][col] = newColor;
+
+                int delrow[] = {-1, 0, 1, 0};
+                int delcol[] = {0, 1, 0, -1};
+
+                for (int i = 0; i < 4; i++) {
+                    int nrow = row + delrow[i];
+                    int ncol = col + delcol[i];
+
+                    if (nrow >= 0 && nrow < n && ncol >= 0 && ncol < m) {
+                        stk.push({nrow, ncol});
+                    }
+                }
             }
         }
-    }
 
-    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
-        int inicolor = image[sr][sc];
-        if (inicolor == newColor) {
-            return image; 
-        }
-        
-        vector<vector<int>> ans = image;
-        dfs(sr, sc, ans, image, newColor, inicolor);
         return ans;
     }
 };
